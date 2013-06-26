@@ -12,7 +12,7 @@ import csv
 import matplotlib.pyplot as plt
 import itertools
 
-def readfile(filename,tablename):
+def readfile(filename,tablename,columns):
     
     with open(filename,'rb') as csvfile:
         datareader = csv.reader(csvfile,dialect='excel')
@@ -34,16 +34,24 @@ def readfile(filename,tablename):
                     print row
                     data.append(row)
         print 'Started at ' + str(startline) + ' and finished at ' + str(endline)
-        return reshape_data(headers,data)
+        return reshape_data(headers,data,columns)
 
-def reshape_data(headers, data):
+def reshape_data(headers, data, col2print):
     '''Reshapes chart data received in list of headers and data rows
     Input: 
         headers:     1-by-x list of headers
         data:        y-by-x list of data rows
+        col2print:     1-by-x list of headers to retain
     Output:
-        reshaped:    y+1-by-x list of lists of data with headers in [0]
+        reshaped:    y+1-by-x list of lists of data with headers in col2print
     '''
+    
+    # Find index of headers to retain
+    header_idx = [0]
+    for column in col2print:
+        header_idx.append(headers.index(column))
+    print header_idx
+        
     reshaped = [['Year']]
     for column in headers:
         if (column != ''):
@@ -53,8 +61,12 @@ def reshape_data(headers, data):
         for i,column in enumerate(row):
             if (column != ''):
                 reshaped[i].append(float(column))
+    
+    final = []            
+    for i in header_idx:
+        final.append(reshaped[i])
                 
-    return reshaped
+    return final
 
 def plot_stacked_bar(data,tablename):
     
@@ -82,8 +94,9 @@ def main():
     
     filename = 'SelectedResults_Zv39.csv'
     tablename = 'TotalAnnualCapacity (Capacity Units)'
+    cols2print = ['TEE','INW','RIV']
     
-    plottabledata = readfile(filename,tablename)
+    plottabledata = readfile(filename,tablename,cols2print)
     print 'Finished reading in file'
     
     plot_stacked_bar(plottabledata,tablename)
