@@ -56,6 +56,28 @@ def reshape_data(headers, data):
                 
     return reshaped
 
+def plot_stacked_bar(data,tablename):
+    
+    p = []
+    headerlist = []
+    colors = itertools.cycle(['y', 'g', 'r', 'c', 'm', 'b', 'k'])
+    xaxis = data[0][1:]
+    
+    for i,row in enumerate(data[1:]):
+    #       Get the value of the previous entry to fill in the bottom parameter
+        if (i >= 1):
+            bottom = data[i][1:]
+        else:
+            bottom = 0
+    #       Add the plot to the list of plots
+        p.append( plt.bar(xaxis,row[1:],bottom=bottom,color=colors.next()))
+        headerlist.append(row[0])
+        
+    #   Build legend
+    plt.legend( (p), (headerlist) )
+    plt.title(tablename)
+    plt.show()
+
 def main():
     
     filename = 'SelectedResults_Zv39.csv'
@@ -64,28 +86,12 @@ def main():
     plottabledata = readfile(filename,tablename)
     print 'Finished reading in file'
     
+    plot_stacked_bar(plottabledata,tablename)
+    
     #===========================================================================
     # Plot the chart
     #===========================================================================
-    p = []
-    headerlist = []
-    colors = itertools.cycle(['y', 'g', 'r', 'c', 'm', 'b', 'k'])
-    xaxis = plottabledata[0][1:]
-    for i,row in enumerate(plottabledata[1:]):
-        
-#       Get the value of the previous entry to fill in the bottom parameter
-        if (i >= 1):
-            bottom = plottabledata[i][1:]
-        else:
-            bottom = 0
-#       Add the plot to the list of plots
-        p.append( plt.bar(xaxis,row[1:],bottom=bottom,color=colors.next()))
-        headerlist.append(row[0])
-        
-#   Build legend
-    plt.legend( (p), (headerlist) )
-    plt.title(tablename)
-    plt.show()
+    
     
 main()
 
